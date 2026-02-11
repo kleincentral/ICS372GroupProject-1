@@ -1,5 +1,8 @@
 package org.example.ui;
 
+import org.example.OrderJsonParser;
+import org.example.model.Order;
+
 import java.util.Scanner;
 
 public class ConsoleUI {
@@ -39,11 +42,20 @@ public class ConsoleUI {
         System.out.print("Choose: ");
     }
 
-    // --- Stubs for now (your team will connect Orders/JsonParser later) ---
+    // --- Stubs for now (team will connect Orders/JsonParser later) ---
     private void importOrders() {
         System.out.print("Enter JSON file path: ");
         String path = scanner.nextLine().trim();
-        System.out.println("Import requested for: " + path + " (not wired yet)");
+
+        OrderJsonParser parser = new OrderJsonParser();
+        Order order = parser.parseOrderFromFile(path);
+
+        if (order != null) {
+            System.out.println("Successfully imported order!");
+            System.out.println(order.toDisplayString());
+        } else {
+            System.out.println("Failed to import order from: " + path);
+        }
     }
 
     private void listUncompletedOrders() {
