@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.model.Item;
 import org.example.model.Order;
 import org.example.model.OrderStatus;
 import org.example.model.OrderType;
@@ -55,6 +56,8 @@ public class Orders {
                 findByID(orderID).setStatus(completionStatus);
                 return true;
             } else return false;
+            findByID(orderID).setStatus(completionStatus);
+            return true;
         } catch (Exception E) {
             return false;
         }
