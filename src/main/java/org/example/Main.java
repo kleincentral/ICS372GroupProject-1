@@ -1,10 +1,10 @@
 package org.example;
-public class Main {
-    static void main() {
-        IO.println(String.format("Hello and welcome!"));
 
-        for (int i = 1; i <= 5; i++) {
-            IO.println("i = " + i);
-        }
+import org.example.ui.ConsoleUI;
+
+public class Main {
+    public static void main(String[] args) {
+        ConsoleUI ui = new ConsoleUI();
+        ui.run();
     }
 }
