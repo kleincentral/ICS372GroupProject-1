@@ -52,7 +52,7 @@ public class Order {
         StringBuilder sb = new StringBuilder();
         sb.append("Order ID: ").append(orderId).append("\n");
         sb.append("Type: ").append(type).append("\n");
-        sb.append("Order Time (ms): ").append(orderTimeMillis).append("\n");
+        sb.append("Order Date: ").append(orderTimeMillis).append("\n");
         sb.append("Status: ").append(status).append("\n");
         sb.append("Items:\n");
         for (Item item : items) {
@@ -62,7 +62,7 @@ public class Order {
               .append(" | price=").append(item.getPrice())
               .append("\n");
         }
-        sb.append("Total: ").append(getTotalPrice()).append("\n");
+        sb.append("Total: $").append(String.format("%.2f", getTotalPrice())).append("\n");
         return sb.toString();
     }
 
