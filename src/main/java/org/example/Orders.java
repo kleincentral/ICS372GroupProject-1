@@ -52,12 +52,19 @@ public class Orders {
     // the last order you looked up in completion status you can enter -1
     public boolean updateCompletion(OrderStatus completionStatus, String orderID) {
         try {
+            if (findByID(orderID) != null){
+                findByID(orderID).setStatus(completionStatus);
+                return true;
+            } else return false;
             findByID(orderID).setStatus(completionStatus);
             return true;
         } catch (Exception E) {
             return false;
         }
     }
+
+
+
 
 
 }  //item price
