@@ -42,12 +42,11 @@ public class ConsoleUI {
         System.out.print("Choose: ");
     }
 
-    // --- Stubs for now (your team will connect Orders/JsonParser later) ---
+    // connect Orders when Orders class is finished
     private void importOrders() {
         System.out.print("Enter JSON file path: ");
         String path = scanner.nextLine().trim();
 
-        // Use YOUR parser here!
         OrderJsonParser parser = new OrderJsonParser();
         Order order = parser.parseOrderFromFile(path);
 
