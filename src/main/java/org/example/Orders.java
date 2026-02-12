@@ -4,68 +4,51 @@ import org.example.model.Item;
 import org.example.model.Order;
 import org.example.model.OrderStatus;
 import org.example.model.OrderType;
-import java.util.List;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class Orders {
-    private Order[] Orders;
+
+    private Order[] orders;
     private int index = 0;
 
-    // constructor
+    // Constructor
     public Orders() {
-        this.Orders = new Order[1000];
+        this.orders = new Order[1000];
     }
 
     public void addOrder(OrderType type, long time, List<Item> items, String orderID) {
-        Orders[index] = new Order(orderID, type, time, items);
+        orders[index] = new Order(orderID, type, time, items);
         index++;
     }
 
     public Order[] getOrders() {
-        return Orders;
+        return orders;
     }
 
     private Order findByID(String orderID) {
-        try {
-            for (int i = 0; i < Orders.length; i++) {
-                if (Orders[i] == null) {
-                    return null;
-                }
-                else if (Orders[i].getOrderId().equals(orderID)) {
-                    return Orders[i];
-                }
+        for (int i = 0; i < index; i++) {
+            if (orders[i] != null && orders[i].getOrderId().equals(orderID)) {
+                return orders[i];
             }
-        } catch (Exception E) {
-            throw new RuntimeException("An error occurred: " + E);
         }
         return null;
     }
 
     public OrderStatus getCompletionStatus(String orderID) {
-        return findByID(orderID).getStatus();
-    }
-
-    // Returns true once the completion status has been updated.
-    // You must pass an INT for the orderID, however if you want to just use
-    // the last order you looked up in completion status you can enter -1
-    public boolean updateCompletion(OrderStatus completionStatus, String orderID) {
-        try {
-            if (findByID(orderID) != null){
-                findByID(orderID).setStatus(completionStatus);
-                return true;
-            } else return false;
-            findByID(orderID).setStatus(completionStatus);
-            return true;
-        } catch (Exception E) {
-            return false;
+        Order order = findByID(orderID);
+        if (order == null) {
+            return null;
         }
+        return order.getStatus();
     }
 
-
-
-
-
-}  //item price
-
+    public boolean updateCompletion(OrderStatus completionStatus, String orderID) {
+        Order order = findByID(orderID);
+        if (order != null) {
+            order.setStatus(completionStatus);
+            return true;
+        }
+        return false;
+    }
+}

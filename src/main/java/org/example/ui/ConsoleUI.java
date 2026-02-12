@@ -1,12 +1,16 @@
 package org.example.ui;
 
 import org.example.OrderJsonParser;
-import org.example.model.Order;
 import org.example.Orders;
+import org.example.model.Item;
+import org.example.model.Order;
 import org.example.model.OrderStatus;
+
+import java.io.FileWriter;
 import java.util.Scanner;
 
 public class ConsoleUI {
+
     private final Scanner scanner = new Scanner(System.in);
     private final Orders ordersManager = new Orders();
     private final OrderJsonParser parser = new OrderJsonParser();
@@ -45,7 +49,6 @@ public class ConsoleUI {
         System.out.print("Choose: ");
     }
 
-    // --- Stubs for now (your team will connect Orders/JsonParser later) ---
     private void importOrders() {
         System.out.print("Enter JSON file path: ");
         String path = scanner.nextLine().trim();
@@ -59,35 +62,34 @@ public class ConsoleUI {
                     order.getItems(),
                     order.getOrderId()
             );
-            System.out.println("✓ Order imported successfully!");
+            System.out.println("Order imported successfully!");
             System.out.println(order.toDisplayString());
         } else {
-            System.out.println("✗ Failed to import order from: " + path);
+            System.out.println("Failed to import order from: " + path);
         }
     }
 
     private void listUncompletedOrders() {
         Order[] orders = ordersManager.getOrders();
-        System.out.println("\n--- Uncompleted Orders ---");
-
-        boolean foundAny = false;
         double totalPrice = 0.0;
+        boolean found = false;
 
         for (Order order : orders) {
             if (order == null) break;
 
             if (order.getStatus() != OrderStatus.COMPLETED) {
                 System.out.println(order.toDisplayString());
-                System.out.println("-".repeat(50));
+                System.out.println("-----------------------------------");
                 totalPrice += order.getTotalPrice();
-                foundAny = true;
+                found = true;
             }
         }
 
-        if (!foundAny) {
+        if (!found) {
             System.out.println("No uncompleted orders found.");
         } else {
-            System.out.println("Total price of all uncompleted orders: $" + String.format("%.2f", totalPrice));
+            System.out.println("Total price of uncompleted orders: $" +
+                    String.format("%.2f", totalPrice));
         }
     }
 
@@ -95,44 +97,35 @@ public class ConsoleUI {
         System.out.print("Enter Order ID: ");
         String id = scanner.nextLine().trim();
 
-        Order[] orders = ordersManager.getOrders();
-        Order found = null;
-
-        for (Order order : orders) {
+        for (Order order : ordersManager.getOrders()) {
             if (order == null) break;
+
             if (order.getOrderId().equals(id)) {
-                found = order;
-                break;
+                System.out.println(order.toDisplayString());
+                return;
             }
         }
 
-        if (found != null) {
-            System.out.println(found.toDisplayString());
-        } else {
-            System.out.println("Order not found: " + id);
-        }
+        System.out.println("Order not found: " + id);
     }
 
     private void startOrder() {
         System.out.print("Enter Order ID to start: ");
         String id = scanner.nextLine().trim();
 
-        OrderStatus currentStatus = ordersManager.getCompletionStatus(id);
+        OrderStatus status = ordersManager.getCompletionStatus(id);
 
-        if (currentStatus == null) {
-            System.out.println("Order not found: " + id);
+        if (status == null) {
+            System.out.println("Order not found.");
             return;
         }
 
-        if (currentStatus == OrderStatus.NOT_STARTED) {
-            boolean success = ordersManager.updateCompletion(OrderStatus.IN_PROGRESS, id);
-            if (success) {
-                System.out.println("✓ Order " + id + " started successfully!");
-            } else {
-                System.out.println("✗ Failed to start order.");
+        if (status == OrderStatus.NOT_STARTED) {
+            if (ordersManager.updateCompletion(OrderStatus.IN_PROGRESS, id)) {
+                System.out.println("Order started successfully.");
             }
         } else {
-            System.out.println("Cannot start order. Current status: " + currentStatus);
+            System.out.println("Cannot start order. Current status: " + status);
         }
     }
 
@@ -140,31 +133,61 @@ public class ConsoleUI {
         System.out.print("Enter Order ID to complete: ");
         String id = scanner.nextLine().trim();
 
-        OrderStatus currentStatus = ordersManager.getCompletionStatus(id);
+        OrderStatus status = ordersManager.getCompletionStatus(id);
 
-        if (currentStatus == null) {
-            System.out.println("Order not found: " + id);
+        if (status == null) {
+            System.out.println("Order not found.");
             return;
         }
 
-        if (currentStatus == OrderStatus.IN_PROGRESS) {
-            boolean success = ordersManager.updateCompletion(OrderStatus.COMPLETED, id);
-            if (success) {
-                System.out.println("✓ Order " + id + " completed successfully!");
-            } else {
-                System.out.println("✗ Failed to complete order.");
+        if (status == OrderStatus.IN_PROGRESS) {
+            if (ordersManager.updateCompletion(OrderStatus.COMPLETED, id)) {
+                System.out.println("Order completed successfully.");
             }
         } else {
-            System.out.println("Cannot complete order. Current status: " + currentStatus);
-            if (currentStatus == OrderStatus.NOT_STARTED) {
-                System.out.println("Hint: Start the order first before completing it.");
-            }
+            System.out.println("Cannot complete order. Current status: " + status);
         }
     }
 
     private void exportOrders() {
         System.out.print("Enter output JSON file path: ");
         String path = scanner.nextLine().trim();
-        System.out.println("Export requested to: " + path + " (not wired yet)");
+
+        try {
+            org.json.simple.JSONArray ordersArray = new org.json.simple.JSONArray();
+
+            for (Order order : ordersManager.getOrders()) {
+                if (order == null) break;
+
+                org.json.simple.JSONObject orderJson = new org.json.simple.JSONObject();
+                orderJson.put("order_id", order.getOrderId());
+                orderJson.put("type", order.getType().toString());
+                orderJson.put("order_date", order.getOrderTimeMillis());
+                orderJson.put("status", order.getStatus().toString());
+
+                org.json.simple.JSONArray itemsArray = new org.json.simple.JSONArray();
+
+                for (Item item : order.getItems()) {
+                    org.json.simple.JSONObject itemJson = new org.json.simple.JSONObject();
+                    itemJson.put("name", item.getName());
+                    itemJson.put("quantity", item.getQuantity());
+                    itemJson.put("price", item.getPrice());
+                    itemsArray.add(itemJson);
+                }
+
+                orderJson.put("items", itemsArray);
+                ordersArray.add(orderJson);
+            }
+
+            FileWriter file = new FileWriter(path);
+            file.write(ordersArray.toJSONString());
+            file.flush();
+            file.close();
+
+            System.out.println("Orders exported successfully!");
+
+        } catch (Exception e) {
+            System.out.println("Error exporting orders: " + e.getMessage());
+        }
     }
 }
