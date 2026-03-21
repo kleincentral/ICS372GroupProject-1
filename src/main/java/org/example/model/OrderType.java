@@ -2,5 +2,6 @@ package org.example.model;
 
 public enum OrderType {
     SHIP,
-    PICKUP
+    PICKUP,
+    DIRECT_DELIVERY
 }
