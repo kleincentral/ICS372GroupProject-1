@@ -3,12 +3,12 @@ package org.example;
 import org.example.model.Item;
 import org.example.model.Order;
 import org.example.model.OrderType;
-import org.example.model.OrderStatus;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,7 +61,11 @@ public class OrderJsonParser {
             List<Item> items = parseItems(itemsArray);
             String orderId = "ORDER-" + nextId++;
 
-            return new Order(orderId, orderType, orderDateLong, items);
+            // Extract filename from path for source tracking
+            String sourceFile = new File(filePath).getName();
+
+            // Create Order with source tracking
+            return new Order(orderId, orderType, orderDateLong, items, sourceFile, "unknown");
 
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
@@ -97,11 +101,12 @@ public class OrderJsonParser {
         return items;
     }
 
-    // Converts type string ("ship"/"pickup") to OrderType enum
+    // Converts type string ("ship"/"pickup"/"delivery") to OrderType enum
     private OrderType convertToOrderType(String typeString) {
         return switch (typeString.toLowerCase()) {
             case "ship" -> OrderType.SHIP;
             case "pickup" -> OrderType.PICKUP;
+            case "delivery" -> OrderType.DELIVERY;
             default -> null;
         };
     }

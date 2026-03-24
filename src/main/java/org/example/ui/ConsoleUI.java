@@ -7,6 +7,8 @@ import org.example.storage.OrderRepository;
 //testing
 import java.util.List;
 import java.util.Scanner;
+import org.example.OrderJsonParser;
+import org.example.XMLInput;
 
 public class ConsoleUI {
     private final Scanner scanner = new Scanner(System.in);
@@ -44,7 +46,7 @@ public class ConsoleUI {
 
     private void printMenu() {
         System.out.println("\n----- Order Tracking System -----");
-        System.out.println("1) Import orders from JSON file");
+        System.out.println("1) Import orders from JSON or XML file");
         System.out.println("2) List uncompleted orders");
         System.out.println("3) Display order by ID");
         System.out.println("4) Start order");
@@ -56,19 +58,29 @@ public class ConsoleUI {
     }
 
     private void importOrders() {
-        Order testOrder = new Order(
-                "TEST-" + System.currentTimeMillis(),
-                org.example.model.OrderType.SHIP,
-                System.currentTimeMillis(),
-                java.util.List.of(
-                        new org.example.model.Item("Test Item", 2, 10.0)
-                )
-        );
+        System.out.print("Enter file path: ");
+        String filePath = scanner.nextLine().trim();
 
-        repository.addOrder(testOrder);
+        Order order = null;
 
-        System.out.println("Order added (temporary test mode).");
-        System.out.println(testOrder.toDisplayString());
+        if (filePath.toLowerCase().endsWith(".json")) {
+            OrderJsonParser jsonParser = new OrderJsonParser();
+            order = jsonParser.parseOrderFromFile(filePath);
+        } else if (filePath.toLowerCase().endsWith(".xml")) {
+            XMLInput xmlParser = new XMLInput();
+            order = xmlParser.parseOrderFromFile(filePath);
+        } else {
+            System.out.println("Error: Unsupported file format. Please use .json or .xml files.");
+            return;
+        }
+
+        if (order != null) {
+            repository.addOrder(order);
+            System.out.println("✓ Order imported successfully!");
+            System.out.println(order.toDisplayString());
+        } else {
+            System.out.println("✗ Failed to import order. Check file format and try again.");
+        }
     }
 
     private void listUncompletedOrders() {
