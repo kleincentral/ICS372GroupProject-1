@@ -1,0 +1,29 @@
+{
+  "orders": [
+    {
+      "orderId": "485",
+      "type": "DIRECT_DELIVERY",
+      "status": "NOT_STARTED",
+      "time": 1774450919115,
+      "source": "test_order.xml",
+      "warehouse": "unknown",
+      "items": [
+        {
+          "name": "Rubber duck",
+          "quantity": 2,
+          "price": 13.45
+        },
+        {
+          "name": "Soap",
+          "quantity": 2,
+          "price": 5.25
+        },
+        {
+          "name": "Paper Towel Roll",
+          "quantity": 1,
+          "price": 8.99
+        }
+      ]
+    }
+  ]
+}
