@@ -106,7 +106,7 @@ public class OrderJsonParser {
         return switch (typeString.toLowerCase()) {
             case "ship" -> OrderType.SHIP;
             case "pickup" -> OrderType.PICKUP;
-            case "delivery" -> OrderType.DELIVERY;
+            case "delivery" -> OrderType.DIRECT_DELIVERY;
             default -> null;
         };
     }

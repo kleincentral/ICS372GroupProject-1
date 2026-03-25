@@ -169,7 +169,7 @@ public class XMLInput {
 
     private OrderType convertToOrderType(String typeString) {
         return switch (typeString.toLowerCase()) {
-            case "delivery" -> OrderType.DELIVERY;
+            case "delivery" -> OrderType.DIRECT_DELIVERY;
             case "ship" -> OrderType.SHIP;
             case "pickup" -> OrderType.PICKUP;
             default -> null;

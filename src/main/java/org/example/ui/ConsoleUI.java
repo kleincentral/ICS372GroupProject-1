@@ -136,7 +136,7 @@ public class ConsoleUI {
             return;
         }
 
-        if (order.getStatus() == OrderStatus.CANCELLED) {
+        if (order.getStatus() == OrderStatus.CANCELED) {
             System.out.println("Cancelled orders cannot be started.");
             return;
         }
@@ -156,7 +156,7 @@ public class ConsoleUI {
             return;
         }
 
-        if (order.getStatus() == OrderStatus.CANCELLED) {
+        if (order.getStatus() == OrderStatus.CANCELED) {
             System.out.println("Cancelled orders cannot be completed.");
             return;
         }
@@ -181,7 +181,7 @@ public class ConsoleUI {
             return;
         }
 
-        order.setStatus(OrderStatus.CANCELLED);
+        order.setStatus(OrderStatus.CANCELED);
         System.out.println("Order cancelled.");
     }
 

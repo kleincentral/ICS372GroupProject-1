@@ -42,7 +42,7 @@ public class OrderRepository {
         List<Order> result = new ArrayList<>();
         for (Order order : orders) {
             if (order.getStatus() != org.example.model.OrderStatus.COMPLETED
-                    && order.getStatus() != org.example.model.OrderStatus.CANCELLED) {
+                    && order.getStatus() != org.example.model.OrderStatus.CANCELED) {
                 result.add(order);
             }
         }
