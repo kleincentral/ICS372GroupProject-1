@@ -11,6 +11,18 @@ import java.util.List;
 
 public class OrderPersistence {
 
+// I need to save all orders to a file so data is not lost when the program closes
+// I need to loop through each order and write its basic information to the file
+// I need to also save all items inside each order
+// I need to separate each order using an "END" marker so it can be read correctly later
+// I need to handle file writing errors using try-catch to prevent crashes
+// I need to load orders from a file when the program starts
+// I need to read each line and reconstruct the order details (ID, type, status, time)
+// I need to convert strings back into enums and numbers when loading data
+// I need to read items until reaching the "END" marker for each order
+// I need to handle missing files or errors gracefully if no previous data exists
+
+
     // Save all orders to a file
     public void saveOrders(List<Order> orders, String filePath) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {

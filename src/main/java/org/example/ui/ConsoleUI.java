@@ -10,6 +10,17 @@ import java.util.Scanner;
 import org.example.OrderJsonParser;
 import org.example.XMLInput;
 
+// I need to load saved orders from a file when the program starts
+// I need to store all loaded orders into the repository for easy access
+// I need to continuously show the menu until the user chooses to exit
+// I need to validate user input so invalid choices don’t crash the program
+// I need to implement real JSON importing instead of the temporary test order
+// I need to display only orders that are not completed
+// I need to search and display an order by its ID
+// I need to update the status of an order when starting, completing, or cancelling it
+// I need to prevent invalid state changes (like completing a cancelled order)
+// I need to properly export orders to a JSON file instead of the placeholder message
+
 public class ConsoleUI {
     private final Scanner scanner = new Scanner(System.in);
     private final OrderRepository repository = new OrderRepository();
