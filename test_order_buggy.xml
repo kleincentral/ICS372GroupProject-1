@@ -1,0 +1,33 @@
+<Orders>
+    <Order id="486">
+        <OrderType>Ship</OrderType>
+
+        <Item type="Widget">
+            <Price>15.99</Price>
+            <Quantity>3</Quantity>
+        </Item>
+
+        <Item type="">
+            <Price>BAD_PRICE</Price>
+            <Quantity>2</Quantity>
+        </Item>
+
+        <Item type="Gadget">
+            <Quantity>5</Quantity>
+        </Item>
+
+        <Item type="Valid Item">
+            <Price>9.99</Price>
+            <Quantity>1</Quantity>
+        </Item>
+    </Order>
+
+    <Order>
+        <OrderType>Pickup</OrderType>
+
+        <Item type="Test">
+            <Price>5.00</Price>
+            <Quantity>1</Quantity>
+        </Item>
+    </Order>
+</Orders>
