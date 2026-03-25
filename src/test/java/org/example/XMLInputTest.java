@@ -58,7 +58,7 @@ public class XMLInputTest {
         // Verify order was created
         assertNotNull(order, "Order should not be null");
         assertEquals("123", order.getOrderId());
-        assertEquals(OrderType.DELIVERY, order.getType());
+        assertEquals(OrderType.DIRECT_DELIVERY, order.getType());
         assertEquals("valid_order.xml", order.getSource());
 
         // Verify items
