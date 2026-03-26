@@ -13,19 +13,19 @@ import java.util.Scanner;
 public class OrderRepository {
     private final List<Order> orders = new ArrayList<>();
 
-    // add order
+    // Add order
     public void addOrder(Order order) {
         if (order != null) {
             orders.add(order);
         }
     }
 
-    // get all orders
+    // Get all orders
     public List<Order> getAllOrders() {
         return new ArrayList<>(orders);
     }
 
-    // find by id
+    // Find order by ID
     public Order findById(String id) {
         for (Order order : orders) {
             if (order.getOrderId().equalsIgnoreCase(id)) {
@@ -35,21 +35,85 @@ public class OrderRepository {
         return null;
     }
 
-    // get uncompleted orders
+    // Get uncompleted orders
     public List<Order> getUncompletedOrders() {
         List<Order> result = new ArrayList<>();
+
         for (Order order : orders) {
             if (order.getStatus() != OrderStatus.COMPLETED
                     && order.getStatus() != OrderStatus.CANCELED) {
                 result.add(order);
             }
         }
+
         return result;
     }
 
-    // =========================
-    // SAVE TO FILE
-    // =========================
+    // Start an order
+    public boolean startOrder(String id) {
+        Order order = findById(id);
+
+        if (order == null) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.COMPLETED) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELED) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.IN_PROGRESS) {
+            return false;
+        }
+
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        return true;
+    }
+
+    // Complete an order
+    public boolean completeOrder(String id) {
+        Order order = findById(id);
+
+        if (order == null) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELED) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.COMPLETED) {
+            return false;
+        }
+
+        order.setStatus(OrderStatus.COMPLETED);
+        return true;
+    }
+
+    // Cancel an order
+    public boolean cancelOrder(String id) {
+        Order order = findById(id);
+
+        if (order == null) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.COMPLETED) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELED) {
+            return false;
+        }
+
+        order.setStatus(OrderStatus.CANCELED);
+        return true;
+    }
+
+    // Save orders to JSON file
     public void saveToFile() {
         try {
             FileWriter writer = new FileWriter("orders.json");
@@ -67,6 +131,7 @@ public class OrderRepository {
                 if (i < orders.size() - 1) {
                     writer.write(",");
                 }
+
                 writer.write("\n");
             }
 
@@ -80,15 +145,13 @@ public class OrderRepository {
         }
     }
 
-    // =========================
-    // LOAD FROM FILE
-    // =========================
+    // Load orders from JSON file
     public void loadFromFile() {
         try {
             File file = new File("orders.json");
 
             if (!file.exists()) {
-                return; // nothing to load
+                return;
             }
 
             Scanner scanner = new Scanner(file);
@@ -96,14 +159,12 @@ public class OrderRepository {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine().trim();
 
-                // find id line
                 if (line.startsWith("\"id\"")) {
                     String id = line.split(":")[1]
                             .replace("\"", "")
                             .replace(",", "")
                             .trim();
 
-                    // next line = status
                     String statusLine = scanner.nextLine().trim();
                     String statusStr = statusLine.split(":")[1]
                             .replace("\"", "")
@@ -112,22 +173,19 @@ public class OrderRepository {
 
                     OrderStatus status = OrderStatus.valueOf(statusStr);
 
-                    // create order with required constructor
                     Order order = new Order(
                             id,
-                            OrderType.PICKUP,           // default type
-                            System.currentTimeMillis(),// default time
-                            new ArrayList<>()           // empty items
+                            OrderType.PICKUP,
+                            System.currentTimeMillis(),
+                            new ArrayList<>()
                     );
 
                     order.setStatus(status);
-
                     orders.add(order);
                 }
             }
 
             scanner.close();
-
             System.out.println("Orders loaded.");
 
         } catch (Exception e) {
