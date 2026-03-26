@@ -43,12 +43,49 @@ public class Orders {
         return order.getStatus();
     }
 
-    public boolean updateCompletion(OrderStatus completionStatus, String orderID) {
+
+    public boolean startOrder(String orderID) {
         Order order = findByID(orderID);
-        if (order != null) {
-            order.setStatus(completionStatus);
+        if (order == null) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.NOT_STARTED) {
+            order.setStatus(OrderStatus.IN_PROGRESS);
             return true;
         }
+
+        return false;
+    }
+
+
+    public boolean completeOrder(String orderID) {
+        Order order = findByID(orderID);
+        if (order == null) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.IN_PROGRESS) {
+            order.setStatus(OrderStatus.COMPLETED);
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public boolean cancelOrder(String orderID) {
+        Order order = findByID(orderID);
+        if (order == null) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.NOT_STARTED ||
+                order.getStatus() == OrderStatus.IN_PROGRESS) {
+            order.setStatus(OrderStatus.CANCELED);
+            return true;
+        }
+
         return false;
     }
 }
