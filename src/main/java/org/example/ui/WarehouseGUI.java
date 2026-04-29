@@ -1,5 +1,6 @@
 package org.example.ui;
 
+import org.example.OrderJsonParser;
 import org.example.model.*;
 import org.example.persistence.OrderPersistence;
 import org.example.storage.OrderRepository;
@@ -105,25 +106,40 @@ public class WarehouseGUI extends JFrame {
     }
 
     private void importOrder() {
-        String id = JOptionPane.showInputDialog(this, "Enter Order ID:");
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                "Order Files (*.json, *.xml)", "json", "xml"));
 
-        if (id == null || id.trim().isEmpty()) {
-            return;
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            java.io.File file = fileChooser.getSelectedFile();
+            Order order = null;
+
+            if (file.getName().endsWith(".xml")) {
+                org.example.XMLInput xmlParser = new org.example.XMLInput();
+                order = xmlParser.parseOrderFromFile(file.getAbsolutePath());
+            } else if (file.getName().endsWith(".json")) {
+                OrderJsonParser jsonParser = new OrderJsonParser();
+                order = jsonParser.parseOrderFromFile(file.getAbsolutePath());
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Unsupported file format. Please use .json or .xml files.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (order != null) {
+                repository.addOrder(order);
+                save();
+                displayArea.setText("✓ Imported:\n\n" + order);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Failed to import order. Check file format.",
+                        "Import Failed", JOptionPane.ERROR_MESSAGE);
+            }
         }
-
-        Order order = new Order(
-                id,
-                OrderType.SHIP,
-                System.currentTimeMillis(),
-                List.of(new Item("Demo", 1, 10.0))
-        );
-
-        repository.addOrder(order);
-        save();
-
-        displayArea.setText("Imported:\n\n" + order);
     }
-
     private void viewOrders() {
         List<Order> list = repository.getUncompletedOrders();
 

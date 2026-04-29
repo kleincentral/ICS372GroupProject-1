@@ -1,5 +1,7 @@
 package org.example.ui;
 
+import org.example.OrderJsonParser;
+import org.example.XMLInput;
 import org.example.model.Order;
 import org.example.model.OrderStatus;
 import org.example.persistence.OrderPersistence;
@@ -7,8 +9,6 @@ import org.example.storage.OrderRepository;
 
 import java.util.List;
 import java.util.Scanner;
-import org.example.OrderJsonParser;
-import org.example.XMLInput;
 
 public class ConsoleUI {
     private final Scanner scanner = new Scanner(System.in);
