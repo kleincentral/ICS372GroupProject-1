@@ -11,6 +11,7 @@ object ParserFactory {
     /**
      * Get the appropriate parser for a file based on its extension
      */
+    @JvmStatic
     fun getParserForFile(file: File): OrderParser? {
         return when (file.extension.lowercase()) {
             "xml" -> XMLInput()
