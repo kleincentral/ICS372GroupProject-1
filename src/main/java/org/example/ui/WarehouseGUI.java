@@ -22,6 +22,28 @@ public class WarehouseGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("☰ Menu");
+
+        JMenuItem importItem = new JMenuItem("Import");
+        JMenuItem viewItem = new JMenuItem("View Orders");
+        JMenuItem searchItem = new JMenuItem("Search");
+        JMenuItem startItem = new JMenuItem("Start");
+        JMenuItem completeItem = new JMenuItem("Complete");
+        JMenuItem cancelItem = new JMenuItem("Cancel");
+        JMenuItem saveItem = new JMenuItem("Save");
+
+        menu.add(importItem);
+        menu.add(viewItem);
+        menu.add(searchItem);
+        menu.add(startItem);
+        menu.add(completeItem);
+        menu.add(cancelItem);
+        menu.add(saveItem);
+
+        menuBar.add(menu);
+        setJMenuBar(menuBar);
+
         loadOrders();
 
         displayArea.setEditable(false);
@@ -58,6 +80,14 @@ public class WarehouseGUI extends JFrame {
         completeBtn.addActionListener(e -> completeOrder());
         cancelBtn.addActionListener(e -> cancelOrder());
         saveBtn.addActionListener(e -> save());
+
+        importItem.addActionListener(e -> importOrder());
+        viewItem.addActionListener(e -> viewOrders());
+        searchItem.addActionListener(e -> searchOrder());
+        startItem.addActionListener(e -> startOrder());
+        completeItem.addActionListener(e -> completeOrder());
+        cancelItem.addActionListener(e -> cancelOrder());
+        saveItem.addActionListener(e -> save());
 
         viewOrders();
     }
