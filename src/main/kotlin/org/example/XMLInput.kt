@@ -12,12 +12,12 @@ import javax.xml.parsers.DocumentBuilderFactory
  * Reads XML order files and converts them into Order objects.
  * Handles wallyworld.com XML format with error tolerance for buggy data.
  */
-class XMLInput {
+class XMLInput : OrderParser {
 
     /**
      * Parse a single order from an XML file
      */
-    fun parseOrderFromFile(filePath: String): Order? {
+    override fun parseOrderFromFile(filePath: String): Order? {
         return try {
             // Set up XML parser
             val factory = DocumentBuilderFactory.newInstance()

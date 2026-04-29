@@ -12,7 +12,7 @@ import java.io.FileReader
 /**
  * Reads JSON order files and converts them into Order objects.
  */
-class OrderJsonParser {
+class OrderJsonParser : OrderParser {
 
     companion object {
         // Counter for generating unique order IDs
@@ -24,7 +24,7 @@ class OrderJsonParser {
      * @param filePath path to the JSON file
      * @return Order object or null if parsing fails
      */
-    fun parseOrderFromFile(filePath: String): Order? {
+    override fun parseOrderFromFile(filePath: String): Order? {
         val parser = JSONParser()
 
         return try {

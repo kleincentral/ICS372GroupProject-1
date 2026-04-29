@@ -1,5 +1,6 @@
 package org.example.ui;
 
+import org.example.DirectoryImporter;
 import org.example.OrderJsonParser;
 import org.example.model.*;
 import org.example.persistence.OrderPersistence;
@@ -7,12 +8,14 @@ import org.example.storage.OrderRepository;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.List;
 
 public class WarehouseGUI extends JFrame {
 
     private final OrderRepository repository = new OrderRepository();
     private final OrderPersistence persistence = new OrderPersistence();
+    private final DirectoryImporter directoryImporter;
 
     private final JTextArea displayArea = new JTextArea();
     private final JTextField orderIdField = new JTextField(15);
@@ -26,6 +29,7 @@ public class WarehouseGUI extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("☰ Menu");
 
+        JMenuItem importDirItem = new JMenuItem("Import Directory");
         JMenuItem importItem = new JMenuItem("Import");
         JMenuItem viewItem = new JMenuItem("View Orders");
         JMenuItem searchItem = new JMenuItem("Search");
@@ -34,6 +38,7 @@ public class WarehouseGUI extends JFrame {
         JMenuItem cancelItem = new JMenuItem("Cancel");
         JMenuItem saveItem = new JMenuItem("Save");
 
+        menu.add(importDirItem);
         menu.add(importItem);
         menu.add(viewItem);
         menu.add(searchItem);
@@ -46,6 +51,7 @@ public class WarehouseGUI extends JFrame {
         setJMenuBar(menuBar);
 
         loadOrders();
+        directoryImporter = new DirectoryImporter(repository, persistence);
 
         displayArea.setEditable(false);
 
@@ -60,6 +66,7 @@ public class WarehouseGUI extends JFrame {
         JButton completeBtn = new JButton("Complete");
         JButton cancelBtn = new JButton("Cancel");
         JButton saveBtn = new JButton("Save");
+        JButton importDirBtn = new JButton("Import Directory");
 
         JPanel buttons = new JPanel(new GridLayout(2, 4));
         buttons.add(importBtn);
@@ -69,12 +76,15 @@ public class WarehouseGUI extends JFrame {
         buttons.add(completeBtn);
         buttons.add(cancelBtn);
         buttons.add(saveBtn);
+        buttons.add(importDirBtn);
 
         add(top, BorderLayout.NORTH);
         add(new JScrollPane(displayArea), BorderLayout.CENTER);
         add(buttons, BorderLayout.SOUTH);
 
+        importDirItem.addActionListener(e -> importDirectory());
         importBtn.addActionListener(e -> importOrder());
+        importDirBtn.addActionListener(e -> importDirectory());
         viewBtn.addActionListener(e -> viewOrders());
         searchBtn.addActionListener(e -> searchOrder());
         startBtn.addActionListener(e -> startOrder());
@@ -249,6 +259,33 @@ public class WarehouseGUI extends JFrame {
         save();
 
         displayArea.setText("Canceled:\n\n" + order);
+    }
+
+    private void importDirectory() {
+        JFileChooser dirChooser = new JFileChooser();
+        dirChooser.setDialogTitle("Select Directory with Order Files");
+        dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        int result = dirChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File directory = dirChooser.getSelectedFile();
+
+            // Use Kotlin DirectoryImporter!
+            DirectoryImporter.ImportResult importResult =
+                    directoryImporter.importFromDirectory(directory);
+
+            // Show results
+            JOptionPane.showMessageDialog(this,
+                    importResult.getSummaryMessage(),
+                    "Import Complete",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            // Refresh view if any orders were imported
+            if (importResult.getSuccessCount() > 0) {
+                viewOrders();
+            }
+        }
     }
 
     public static void main(String[] args) {
